@@ -14,7 +14,7 @@ def generate_excel_columns(num_columns):
 
 # Streamlit app
 def main():
-    st.title("Trasforma Dati in Formato Verticale (Range di Colonne Personalizzabile)")
+    st.title("Trasforma Taglie in Formato Verticale (Range di Colonne Personalizzabile)")
 
     # File uploader
     uploaded_file = st.file_uploader("Carica un file Excel", type=["xlsx"])
