@@ -63,19 +63,22 @@ def main():
                         value_name='VALUE'  # Nome per i valori trasposti
                     )
 
+                    # Filtra per rimuovere righe con VALUE nullo o zero
+                    reshaped_data = reshaped_data[(reshaped_data['VALUE'].notna()) & (reshaped_data['VALUE'] != 0)]
+
                     # Mostra l'output
-                    st.write("Dati trasformati:")
+                    st.write("Dati trasformati (solo righe con VALUE compilato):")
                     st.dataframe(reshaped_data)
 
                     # Scarica il file riorganizzato
                     st.write("Scarica il file Excel riorganizzato:")
-                    file_name = "Reshaped_Data.xlsx"
+                    file_name = "Filtered_Reshaped_Data.xlsx"
                     reshaped_data.to_excel(file_name, index=False)
                     with open(file_name, "rb") as file:
                         st.download_button(
                             label="Download",
                             data=file,
-                            file_name="Reshaped_Data.xlsx",
+                            file_name="Filtered_Reshaped_Data.xlsx",
                             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                         )
                 except ValueError:
