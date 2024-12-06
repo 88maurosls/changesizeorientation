@@ -14,7 +14,7 @@ def generate_excel_columns(num_columns):
 
 # Streamlit app
 def main():
-    st.title("Trasforma Dati Taglie in Formato Verticale")
+    st.title("Trasforma Dati in Formato Verticale (Range di Colonne Personalizzabile)")
 
     # File uploader
     uploaded_file = st.file_uploader("Carica un file Excel", type=["xlsx"])
@@ -41,7 +41,7 @@ def main():
 
             # Input per il range di colonne
             range_input = st.text_input(
-                "Inserisci il range di colonne per le taglie (es. 'C:V')", value="C:V"
+                "Inserisci il range di colonne da trasporre (es. 'C:V')", value="C:V"
             )
 
             if range_input:
@@ -51,17 +51,17 @@ def main():
                     start_idx = excel_columns.index(start_col)
                     end_idx = excel_columns.index(end_col) + 1
                     cols_to_melt = data.iloc[:, start_idx:end_idx].columns
-                    
+
+                    # Identifica le colonne non selezionate per il range
+                    id_vars = data.drop(columns=cols_to_melt).columns
+
                     # Trasforma i dati
                     reshaped_data = data.melt(
-                        id_vars=['STYLE', 'CODE', 'WHL'],  # Campi identificativi
+                        id_vars=id_vars,  # Colonne non trasposte
                         value_vars=cols_to_melt,
-                        var_name='SIZE',
-                        value_name='QUANTITY'
+                        var_name='SIZE',  # Nome per le colonne trasposte
+                        value_name='VALUE'  # Nome per i valori trasposti
                     )
-
-                    # Rimuove righe con quantità NaN
-                    reshaped_data = reshaped_data.dropna(subset=['QUANTITY'])
 
                     # Mostra l'output
                     st.write("Dati trasformati:")
@@ -69,13 +69,13 @@ def main():
 
                     # Scarica il file riorganizzato
                     st.write("Scarica il file Excel riorganizzato:")
-                    file_name = "Reshaped_Size_Quantity_and_WHL_Data.xlsx"
+                    file_name = "Reshaped_Data.xlsx"
                     reshaped_data.to_excel(file_name, index=False)
                     with open(file_name, "rb") as file:
                         st.download_button(
                             label="Download",
                             data=file,
-                            file_name="Reshaped_Size_Quantity_and_WHL_Data.xlsx",
+                            file_name="Reshaped_Data.xlsx",
                             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                         )
                 except ValueError:
