@@ -28,9 +28,12 @@ def main():
             # Genera i riferimenti delle colonne in stile Excel
             excel_columns = generate_excel_columns(num_columns)
 
-            # Aggiungi i riferimenti stile Excel come prima riga del DataFrame
-            reference_row = pd.DataFrame([excel_columns], columns=data.columns)
-            data_with_references = pd.concat([reference_row, data], ignore_index=True)
+            # Aggiungi i riferimenti stile Excel come intestazione
+            data_with_references = data.copy()
+            data_with_references.columns = excel_columns
+            data_with_references.loc[-1] = data.columns  # Aggiungi la riga originale come prima riga
+            data_with_references.index = data_with_references.index + 1
+            data_with_references.sort_index(inplace=True)
 
             # Mostra l'anteprima dei dati con riferimenti stile Excel
             st.write("Anteprima dei dati caricati (con riferimenti stile Excel):")
