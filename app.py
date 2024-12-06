@@ -41,7 +41,7 @@ def main():
 
             # Input per il range di colonne
             range_input = st.text_input(
-                "Inserisci il range di colonne da trasporre (es. 'C:V')", value="C:V"
+                "Inserisci il range di colonne da trasporre in verticale (es. 'C:V')", value="C:V"
             )
 
             if range_input:
