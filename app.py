@@ -29,7 +29,8 @@ def main():
             excel_columns = generate_excel_columns(num_columns)
 
             # Aggiungi i riferimenti stile Excel come prima riga del DataFrame
-            data_with_references = pd.DataFrame([excel_columns], columns=data.columns).append(data, ignore_index=True)
+            reference_row = pd.DataFrame([excel_columns], columns=data.columns)
+            data_with_references = pd.concat([reference_row, data], ignore_index=True)
 
             # Mostra l'anteprima dei dati con riferimenti stile Excel
             st.write("Anteprima dei dati caricati (con riferimenti stile Excel):")
