@@ -9,10 +9,9 @@ def main():
     uploaded_file = st.file_uploader("Carica un file Excel", type=["xlsx"])
     
     if uploaded_file is not None:
-        # Leggi il file Excel
+        # Leggi il primo foglio del file Excel
         try:
-            sheet_name = st.text_input("Nome del foglio (default: primo foglio)", value=None)
-            data = pd.read_excel(uploaded_file, sheet_name=sheet_name if sheet_name else None)
+            data = pd.read_excel(uploaded_file)
             st.write("Anteprima dei dati caricati:")
             st.write(data.head())
 
@@ -61,4 +60,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
