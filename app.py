@@ -1,6 +1,13 @@
 import streamlit as st
 import pandas as pd
 
+# Funzione per generare le lettere delle colonne in stile Excel
+def generate_excel_columns(num_columns):
+    excel_columns = []
+    for i in range(num_columns):
+        excel_columns.append(pd.io.formats.excel.ExcelFormatter._format_colnum(i))
+    return excel_columns
+
 # Streamlit app
 def main():
     st.title("Trasforma Dati Taglie in Formato Verticale")
@@ -12,12 +19,20 @@ def main():
         # Leggi il primo foglio del file Excel
         try:
             data = pd.read_excel(uploaded_file)
-            st.write("Anteprima dei dati caricati (con nomi delle colonne):")
-            st.dataframe(data)  # Visualizza i dati con nomi di colonne
+            num_columns = data.shape[1]
             
-            # Mostra le colonne disponibili
-            st.write("Colonne disponibili:")
-            st.write(list(data.columns))
+            # Genera i riferimenti delle colonne stile Excel
+            excel_columns = generate_excel_columns(num_columns)
+
+            # Mostra i riferimenti Excel insieme ai dati
+            st.write("Anteprima dei dati caricati (con riferimenti stile Excel):")
+            st.write(pd.DataFrame([excel_columns], columns=data.columns))
+            st.dataframe(data)
+
+            # Mostra le colonne disponibili con riferimenti stile Excel
+            st.write("Colonne disponibili con riferimenti stile Excel:")
+            for letter, column in zip(excel_columns, data.columns):
+                st.write(f"{letter}: {column}")
 
             # Input per il range di colonne
             range_input = st.text_input(
@@ -28,7 +43,9 @@ def main():
                 try:
                     # Converte il range in indici di colonne
                     start_col, end_col = range_input.split(":")
-                    cols_to_melt = data.loc[:, start_col:end_col].columns
+                    start_idx = excel_columns.index(start_col)
+                    end_idx = excel_columns.index(end_col) + 1
+                    cols_to_melt = data.iloc[:, start_idx:end_idx].columns
                     
                     # Trasforma i dati
                     reshaped_data = data.melt(
@@ -56,7 +73,7 @@ def main():
                             file_name="Reshaped_Size_Quantity_and_WHL_Data.xlsx",
                             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                         )
-                except KeyError:
+                except ValueError:
                     st.error("Errore: il range di colonne specificato non è valido. Assicurati di usare colonne esistenti.")
                 except Exception as e:
                     st.error(f"Errore durante la trasformazione: {e}")
