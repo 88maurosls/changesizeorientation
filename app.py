@@ -1,12 +1,17 @@
 import streamlit as st
 import pandas as pd
+import string
 
 # Funzione per generare le lettere delle colonne in stile Excel
 def generate_excel_columns(num_columns):
-    excel_columns = []
-    for i in range(num_columns):
-        excel_columns.append(pd.io.formats.excel.ExcelFormatter._format_colnum(i))
-    return excel_columns
+    letters = []
+    for i in range(1, num_columns + 1):
+        column_name = ""
+        while i > 0:
+            i, remainder = divmod(i - 1, 26)
+            column_name = chr(65 + remainder) + column_name
+        letters.append(column_name)
+    return letters
 
 # Streamlit app
 def main():
@@ -21,12 +26,13 @@ def main():
             data = pd.read_excel(uploaded_file)
             num_columns = data.shape[1]
             
-            # Genera i riferimenti delle colonne stile Excel
+            # Genera i riferimenti delle colonne in stile Excel
             excel_columns = generate_excel_columns(num_columns)
 
             # Mostra i riferimenti Excel insieme ai dati
             st.write("Anteprima dei dati caricati (con riferimenti stile Excel):")
-            st.write(pd.DataFrame([excel_columns], columns=data.columns))
+            reference_row = pd.DataFrame([excel_columns], columns=data.columns)
+            st.write(reference_row)  # Mostra i riferimenti stile Excel
             st.dataframe(data)
 
             # Mostra le colonne disponibili con riferimenti stile Excel
